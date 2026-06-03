@@ -38,7 +38,7 @@ python -m evalscope_ext.tools.compare_runs --data-dir ./Evals
 Random sampling tests general image QA ability.  
 The probe tests whether the model can **see fine detail** in images.
 
-A model can pass random MMMU and still fail on circuit diagrams or medical scans. Random sampling misses this failure mode about 80% of the time, because most MMMU images are natural photos where a degraded encoder still scores acceptably.
+A model can pass random MMMU and still fail on circuit diagrams or medical scans. Random sampling can miss this failure mode because most MMMU samples do not stress fine-detail visual encoding, because most MMMU images are natural photos where a degraded encoder still scores acceptably.
 
 The probe selects subjects (Engineering, Medicine, Basic Science) where image understanding is the bottleneck — so a weak encoder shows up as a measurable accuracy gap versus the random baseline.
 
