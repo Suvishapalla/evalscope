@@ -1,5 +1,8 @@
 ## Cerebras Benchmark Pruning Extension
 
+## Task 2 — Evalscope Fork
+https://github.com/Suvishapalla/evalscope
+Developed against commit: 7042e59c54637788a18a0642e86bd59608c4bd4d
 Developed against commit: `c14dbaf94e9129f7054ad4a184c2ff0cae2e6a5d`
 
 Install:
