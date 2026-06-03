@@ -171,3 +171,4 @@ node_modules/
 evalscope/web/dist/
 evalscope/web/.vite/
 ragas_mini_testset_score.json
+Evals/Evals/
