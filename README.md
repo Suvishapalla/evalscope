@@ -1,3 +1,23 @@
+## Cerebras Benchmark Pruning Extension
+
+Developed against commit: `c14dbaf94e9129f7054ad4a184c2ff0cae2e6a5d`
+
+Install:
+```bash
+pip install -e .
+```
+
+Run full validation on pre-computed data:
+```bash
+python -m evalscope_ext.tools.compare_runs --data-dir ./Evals
+```
+
+Design principle: selection uses only structural metadata (difficulty tier, context length), never model scores. The pruned subset generalizes to any new model without reconfiguration.
+
+See [`evalscope_ext/handout_a.md`](evalscope_ext/handout_a.md) for the technical design rationale and [`evalscope_ext/handout_b.md`](evalscope_ext/handout_b.md) for the PM/sales summary.
+
+---
+
 <p align="center">
     <br>
     <img src="docs/en/_static/images/evalscope_logo.png"/>
