@@ -60,6 +60,33 @@ def _print_table(title: str, result: Dict[str, Any]) -> None:
         print(f'WARNING: {warning}')
 
 
+def _print_mmmu_table(title: str, result: Dict[str, Any]) -> None:
+    print(f'\n=== {title} ===')
+    print(f"Encoder-stress accuracy : {result.get('stress_accuracy', 0):.4f}")
+    print(f"Non-stress accuracy     : {result.get('non_stress_accuracy', 0):.4f}")
+    print(f"Stress gap              : {result.get('stress_gap', 0):+.4f}  "
+          f"({'degradation signal' if result.get('stress_gap', 0) < -0.1 else 'ok'})")
+
+    per_subject = result.get('per_subject', {}).get('pruned', {})
+    if per_subject:
+        print('\nPer-subject accuracy (pruned):')
+        col_w = max(len(s) for s in per_subject) + 2
+        for subj, acc in sorted(per_subject.items()):
+            print(f"  {subj:<{col_w}} {acc:.4f}")
+
+    pruned = result.get('pruned_count', 0)
+    full = result.get('full_count', 0)
+    try:
+        pct = f'{int(pruned) / int(full) * 100:.0f}%' if full and int(full) > 0 else 'N/A'
+    except (TypeError, ValueError):
+        pct = 'N/A'
+    print(f'Pruned set size: {pruned} / {full} ({pct})')
+
+    warning = result.get('warning')
+    if warning:
+        print(f'WARNING: {warning}')
+
+
 def _print_warnings(result: Dict[str, Any], label: str) -> None:
     per_model = result.get('per_model', {})
     if per_model:
@@ -84,6 +111,7 @@ def run_data_dir(data_dir: str) -> None:
 
     from evalscope.benchmarks.live_code_bench_pruned.live_code_bench_pruned_adapter import LiveCodeBenchPruned
     from evalscope.benchmarks.aa_lcr_pruned.aa_lcr_pruned_adapter import AALCRPruned
+    from evalscope.benchmarks.mmmu_pruned.mmmu_pruned_adapter import MMMUPruned
 
     lcb = LiveCodeBenchPruned()
     lcb_full = lcb.load_samples(data_dir)
@@ -98,6 +126,17 @@ def run_data_dir(data_dir: str) -> None:
     aalcr_result = aalcr.validate(aalcr_full, aalcr_pruned)
     _print_table('AA-LCR Pruned Validation', aalcr_result)
     _print_warnings(aalcr_result, 'AA-LCR')
+
+    from pathlib import Path as _Path
+    _evals_root = _Path(data_dir)
+    _mmmu_dir = _evals_root / 'MMMU' if (_evals_root / 'MMMU').exists() else _evals_root
+    mmmu = MMMUPruned()
+    mmmu_full = mmmu.load_samples(str(_mmmu_dir))
+    mmmu_pruned = mmmu.prune(mmmu_full, prune_ratio=0.1)
+    mmmu_result = mmmu.validate(mmmu_full, mmmu_pruned)
+    _print_mmmu_table('MMMU Pruned Validation', mmmu_result)
+    if mmmu_result.get('warning'):
+        print(f"WARNING [MMMU]: {mmmu_result['warning']}")
 
 
 # ------------------------------------------------------------------
